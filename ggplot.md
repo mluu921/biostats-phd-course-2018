@@ -1,0 +1,846 @@
+---
+title: "ggplot2"
+author: 
+- 'Michael Luu'
+- 'Marcio Diniz'
+date: "February 02, 2018"
+output:
+  html_document:
+    keep_md: yes
+    number_sections: yes
+    toc: yes
+  html_notebook:
+    toc: yes
+---
+
+# Loading Tidyverse and Data
+
+
+```r
+library(tidyverse)
+
+### Reading dataset
+
+df <- read_csv("data/emergency.csv")
+
+### Recoding variables
+
+df <- df %>% mutate(infection =
+                                 factor(infection,
+                                        levels = 0:1,
+                                        labels = c("No", "Yes")),
+                               gender = 
+                                 factor(gender,
+                                        levels = 0:1,
+                                        labels = c("Female", "Male")),
+                               child =
+                                 factor(child,
+                                        levels = 0:2,
+                                        labels = c("A", "B", "C")),
+                               encephalopathy =
+                                 factor(encephalopathy,
+                                        levels = 0:1,
+                                        labels = c("No", "Yes")),
+                               ascites =
+                                 factor(ascites,
+                                        levels = 0:1,
+                                        labels = c("No", "Yes")),
+                               death = 
+                                 factor(death,
+                                        levels = 0:1,
+                                        labels = c("No", "Yes")))
+```
+
+# What is ggplot2 ? 
+
+![](figures/screenshots/tidyverse.PNG)
+
+> ggplot2 is part of the tidyverse suite of packages
+
+> Based off of the grammar of graphics, with the idea of a standardized language used to build graphs by layers
+
+## Resources
+
+[R for Data Science](http://r4ds.had.co.nz/)
+
+[Tidyverse Homepage](https://www.tidyverse.org/)
+
+[R Studio Cheatsheets](https://www.rstudio.com/resources/cheatsheets/)
+
+[ggplot2 Cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)
+
+<!-- # Grammar of Graphics -->
+<!-- ![](figures/screenshots/grammar_of_graphics.PNG) -->
+
+# Building a Plot
+
+![](figures/screenshots/ggplot_documentation.PNG)
+
+# My First Plot
+
+> The actual full syntax of `ggplot()` is `ggplot(data = NULL, mapping = aes()`). R is smart enough that you don't need to specify the argument name as it automatically treats the first object specified as `data = df` and the second argument as `mapping = aes()`. That way `ggplot(df)` is equivalent to `ggplot(data = df)`.
+
+
+```r
+ggplot(data = df)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+> Doesn't look very good! It's just a blank square - Let's try mapping a variable onto the x axis within the aes() argument
+
+## Adding a coordinate system
+
+```r
+ggplot(df, aes(x = age))
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+> Great! We have now mapped the variable age onto the x axis - now lets try adding some geoms such as geom_dotplot
+
+## Adding a geom (dotplot)
+
+```r
+ggplot(df, aes(x = age)) + 
+  geom_dotplot()
+```
+
+```
+## `stat_bindot()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+### Making changes to the geom layer
+
+> Great! Our first plot - it doesn't look very pretty such as the dots being very large spanning multiple age points. Let's update the plot using some of the arguments available inside geom_dotplot. I don't remember all of the available arguments, lets look up the documentation using ?geom_dotplot
+
+![](figures/screenshots/dotplot_documentation.PNG)
+
+> A couple things to highlight, we want to use the histodot function because we want fixed binwidth instead of the default 'dotdensity' approach, we also want to adjust binwidht to 1 indicating 1 stacked column of dots per every age 
+
+![](figures/screenshots//dotplot_documentation2.PNG)
+
+> Let's make those changes
+
+
+```r
+ggplot(df, aes(x = age)) + 
+  geom_dotplot(method = 'histodot', binwidth = 1)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+> Great! This is looking more like a dotplot, but it still doesn't look very pretty. Let's spice things up with themes.
+
+## Themes
+
+![](figures/screenshots/ggplot2_themes.PNG)
+
+> Some of the default themes that come from ggplot2, but there are many more that we can utilize from the ggthemes package! 
+
+[https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html](https://cran.r-project.org/web/packages/ggthemes/vignettes/ggthemes.html)
+
+
+```r
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_bw()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_minimal()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_classic()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+### Utilizing themes from the ggthemes package
+
+> Utilizing themes from the ggthemes package, if you dont have ggthemes then please install using `install.packages('ggthemes')` and loading up the library using `library(ggthemes)`
+
+
+```r
+# install.packages(ggthemes)
+library(ggthemes)
+
+# Theme matching the popular politics/analytics website firvethirtyeight
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_fivethirtyeight()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+
+```r
+# Wallstreet journal
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_wsj()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+
+```r
+# Economist
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_economist()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+
+```r
+# Excel
+
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_excel()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+### Customizing a theme
+
+> Lets continue on with theme_bw(), but make some customizations with the `theme()` function, by removing the ticks, the title, and the text for the y axis.
+
+> We can do this by looking at the documentation for `theme()` using `?theme`
+
+![](figures/screenshots/theme_documentation.PNG)
+
+> Alot of possible changes we can make but we will focus on the `axis.title.y`, `axis.text.y`, and the `axis.ticks.y` arguments.
+
+> Almost all arguments in `theme()` needs to receive the information with the `element_blank()`, `element_text()`, `element_line()`, and `element_rect()` function. We will focus on `element_blank()` for now by using it to remove the information on the y axis.
+
+
+```r
+ggplot(df, aes(x = age)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+
+## Adding and customizing the colors using the fill argument and the scale_fill_manual() / scale_fill_discrete() function
+
+> Looks more like a dotplot now! But how about adding some color, by identifying the infection and non infection patients. We can do this using the `fill` argument and mapping it to the variable infection. Recall if we want to map any variables, we can only utilize those varaibles in the `aes()` argument.
+
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot") +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank())
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+
+> Looks great but the x axis label 'age' doesn't look very good, lets capitalize it and fix the legend title. Doesn't look very 'publication ready'. We can do this by using the `labs()` function, and changing the x axis label. Since the color legend is mapped using the `fill` argument, we can make changes to the title by specifying it with the `scale_fill_discrete()` function.
+
+### Customizing the x axis title and the legend title
+
+> `scale_fill_discrete()` changes the scale name of the fill function manually as well as other options, but we'll focus on changing the name for now. By default, it uses the variable name but in this case we want to change it to something more pleasing and consistent with the rest of the plot.
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_discrete("Infection") +
+  labs(x = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+
+
+> Legend title is now fixed - however what if we want to have custom colors ? We can use the `scale_fill_manual()` instead and specify the colors manually via the values argument. Let's change it to black and green to see how it looks.
+
+
+```r
+ggplot(df, aes(x = age, fill = factor(infection))) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_manual("Infection", values = c('black', 'green')) +
+  labs(x = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+
+### Customizing the colors using palletes
+
+> ggplot2 has a selection of built in color palletes so you dont have to specify your own, that are 'aesthetically pleasing'
+
+![](figures/screenshots/ggplot_pallete_colors.PNG)
+
+Examples can be found on the ggplot2 tidyverse site
+[http://ggplot2.tidyverse.org/reference/scale_brewer.html](http://ggplot2.tidyverse.org/reference/scale_brewer.html)
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_brewer("Infection", palette = "Set3") +
+  labs(x = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_brewer("Infection", palette = "Set2") +
+  labs(x = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+
+> Let's choose 'Set1', to change our color pallete. We can specify the color pallete using the `scale_fill_brewer()` function. We will have to also include the updated scale name 'Infection' that way our legend title has the capitalized 'I'. We can specify the palette using the `palette` function and specify the 'Set1' color pallete.
+
+> What if we don't want the dots to be stacked? We can utilize the facet option to stratify the infection and non infection patients
+
+## Utilizing 'Facets' to separate our dotplot into groups
+
+> We can use the `facet_grid()` function, this will stratify the dotplot by a selected variable such as `infection` by it's levels such as 'Yes', and 'No'
+
+> Lets look at the documentation again
+
+![](figures/screenshots/facet_documentation.PNG)
+
+> We will focus on the facets argument, which per the documentation requires a formula specifying the LHS (left hand side) and the RHS (right hand side) corresponding to rows ~ columns. A . (period) can be used as a placeholder indicating no 'facet' on that level. We can facet by columns upon the infection variable by indicating this formula . ~ infection in the `facet_grid()` function.
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age") +
+  facet_grid(. ~ infection)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+
+> Lets try facet on the row to see how it looks. We can do this by flipping the formula by placing the variable infection on the LHS.
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(stackgroups = TRUE, binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age") +
+  facet_grid(infection ~ .)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+
+> Now that we have faceted the plot, the legend isn't very informative anymore and its redundant. Lets remove it!
+
+## Removing the legend
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none") +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age") +
+  facet_grid(. ~ infection)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+
+> The plot is really starting to come together, but what if we want to change the scale of the x axis ? We want it to be spaced by every 5 years of age instead of 10 ?
+
+## Changing the x axis scale
+
+> We can do this by utilizing the `scale_x_continuous()` function. Per the documentation, one of the arguments is `breaks` which specifies the breaks in the scale and it requires a vector of numbers for the breaks. We can specify it by typing `c(15, 20, 25, ...)` but as programmers we are lazy, and can utilizing the `seq()` function which returns a vector of numbers from a specified range. `seq(0, 100, 1)` will produce a vector of numbers from 0 to 100 by 1.
+
+
+```r
+seq(0,100,1)
+```
+
+```
+##   [1]   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16
+##  [18]  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33
+##  [35]  34  35  36  37  38  39  40  41  42  43  44  45  46  47  48  49  50
+##  [52]  51  52  53  54  55  56  57  58  59  60  61  62  63  64  65  66  67
+##  [69]  68  69  70  71  72  73  74  75  76  77  78  79  80  81  82  83  84
+##  [86]  85  86  87  88  89  90  91  92  93  94  95  96  97  98  99 100
+```
+
+> We can use this in the breaks argument as shown below to specify the range. ggplot2 is smart that it will limit the view of the x axis that is within reasonable range of the data. Just to be safe we'll use `seq(from = 0, to = 100, by = 5)` to create a vector of numbers from 0 to 100 by 5
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_dotplot(binwidth = 1, method = "histodot", binpositions="bygroup")  +
+  theme_bw() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none") +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age") +
+  facet_grid(. ~ infection) +
+  scale_x_continuous(breaks = seq(0,100, 5))
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+
+## Another perspective with dotplots (Vertical bins)
+
+> What if we want to compare the distribution of Infection (No vs Yes) side by side ? We will need to map the infection variable to the x axis and move the age variable to the y axis. We'll also keep the infection variable with the `fill` argument that way it'll retain the color
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection))
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+
+> Now we have the basis of the plot, we can add the dotplot geom once again, except we'll bin the histodots on the y axis instead of x and keep the stack them aligned to the center.
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  geom_dotplot(binaxis = "y", stackdir = "center",
+               binwidth = 1, method = "histodot")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+
+> Now let's add some descriptive indicators on the plot via the `stat_summary()` function. Let's add an indicator of the medians for both the non infection group and the infection group. `stat_summary()` allows us to map a function to the y axis. We will use the `median` function to accomplish this, and use the geom crossbar to visualize the measure.
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  geom_dotplot(binaxis = "y", stackdir = "center",
+               binwidth = 1, method = "histodot") +
+  stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median, geom = "crossbar", width = 0.5) 
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+
+> Let's finish cleaning up the plot with some of the other functions we have learned
+
+
+```r
+# manually calculate the median age by infection group
+
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  geom_dotplot(binaxis = "y", stackdir = "center",
+               binwidth = 1, method = "histodot") +
+  stat_summary(fun.y = median, fun.ymin = median, fun.ymax = median, geom = "crossbar", width = 0.3) +
+  theme_bw() +
+  theme(legend.position = "none",
+        panel.grid = element_blank()) +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(y = "Age", x = "Infection", title = 'Distriubtion of Age Stratified by Infection') +
+  scale_y_continuous(breaks = seq(0,100, 10))
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
+
+# Saving the plot we just made
+
+> Now that we are happy with the plot we just made, we should save it so we can share it with our collaborators.  There are we can do this by invoking the `ggsave()` function. By default `ggsave()` will save the last plot that was rendered, however we can also specify the plot we would like to save as well.
+
+> The command for `ggsave()` is `ggsave(filename = NULL, plot = last_plot(), ...)`. Please see the documentation for further details using `?ggsave`, for other possible arguments to configure.
+
+
+```r
+ggsave('my_first_plot.png', height = 6, width = 8)
+```
+
+> This function will save the previous plot, in your project directory as my_first_plot.png, with a height of 6 inches, and a width of 8 inches.
+
+# My First Histogram Plot
+
+> We start off with the same base template of ggplot2, by assigning ggplot2 the 2 initial requirements for a plot. The name of the dataframe and a mapping for the coordinate within the aesthetic.
+
+
+```r
+ggplot(df, aes(x = age))
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+
+> Next we move forward with stating the name of the geom we want to use, let's try out the histogram geom called `geom_histogram`
+
+
+```r
+ggplot(df, aes(x = age)) + geom_histogram()
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+
+> Huzzah! We have a histogram of age, a method of visualizing the distribution of age. Lets follow the same idea of the dotplot by changing the width of the columns of our histogram. `geom_histogram` also has the same argument called `binwidth` which allows us to make that change. `binwidth = 5` allows us to change the width of the column bins to every 5 years of age. We can also better visualize this by changing the scale on the x axis with `scale_x_continuous()`
+
+
+```r
+ggplot(df, aes(x = age)) +
+  geom_histogram(binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,100,5))
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+
+> Lets add a theme
+
+
+```r
+ggplot(df, aes(x = age)) +
+  geom_histogram(binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,100,5)) +
+  theme_bw()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+
+> The histogram also has the ability to show the density on the y axis instead of counts. We can do this by specifying the mapping within the `aes()` function by using `y = ..density..`
+
+
+```r
+ggplot(df, aes(x = age, y = ..density..)) +
+  geom_histogram(binwidth = 5) +
+  scale_x_continuous(breaks = seq(0,100,5)) +
+  theme_bw()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+
+> We can add colors by mapping the fill aesthetic with our variable infection
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_histogram(binwidth = 5) +
+  theme_bw()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+
+> Changing the axis and scale titles
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_discrete("Infection") +
+  labs(x = "Age", y = "Density")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+
+> Changing the colors
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age", y = "Density")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+
+> Using different panels or 'facets'
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age", y = 'Count') +
+  facet_grid(infection ~ .)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
+
+> Removing the legend and adding both the variable name and levels on the facet 'strips'
+
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Age", y = 'Count') +
+  facet_grid(infection ~ ., labeller = label_both) +
+  theme(legend.position = "none")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+
+# Let's add an extra dimension
+
+```r
+ggplot(df, aes(x = age, fill = infection)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Age", y = 'Count') +
+  facet_grid(infection ~ death, labeller = label_both) +
+  theme(legend.position = "none")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+
+# Let's add even more dimensions
+
+```r
+ggplot(df, aes(x = age, fill = gender)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Age", y = 'Count') +
+  facet_grid(infection ~ death, labeller = label_both)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+
+# Let's add even more dimensions
+
+```r
+ggplot(df, aes(x = age, fill = gender)) +
+  geom_histogram(binwidth = 5)  +
+  theme_bw() +
+  scale_fill_brewer("Infection", palette = "Set1") +
+  labs(x = "Age", y = 'Count') +
+  facet_grid(infection ~ death, labeller = label_both)
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+
+# My First Boxplot
+
+> Create the basis of the plot by including the dataframe and mapping the age onto the y axis.
+
+
+
+> We add `geom_boxplot()` to create the basic boxplot
+
+
+
+> We can add an error bar by adding `stat_boxplot()` with `geom = "errorbar"`
+
+
+
+> Add a theme
+
+
+
+> Remove the x axis title and text as it doesn't make sense for a single box plot
+
+
+
+> We can also add a fill aesthetic by infection to separate the boxplot into no infection and yes infection. To do this we will also need to map the infection variable to the x axis.
+
+
+
+> We can further clean up the plot by changing the axis title and legend title
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  stat_boxplot(geom = "errorbar", width = 0.1) +
+  geom_boxplot() +
+  theme_bw() +
+  scale_fill_discrete('Infection') +
+  labs(x = "Infection", y = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+
+> Change the colors by using a palette
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  stat_boxplot(geom = "errorbar", width = 0.1) +
+  geom_boxplot() +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Infection", y = "Age")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+
+> Also removing the legend within the theme function
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  stat_boxplot(geom = "errorbar", width = 0.1) +
+  geom_boxplot() +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Infection", y = "Age") +
+  theme(legend.position = "none")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
+
+> Going back to the grammar of graphics, we are iteratively adding additional layers to the plot. We can also add a scatter of the points on top of the boxplot to further visualize the distribution of age by infection. We can do this by adding another geom after `geom_boxplot()` called `geom_point()`. The `width = .1` argument controls the amount of jitter. Feel free to change the jitter amount to your liking.
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  stat_boxplot(geom = "errorbar", width = 0.1) +
+  geom_boxplot() +
+  geom_jitter(width = .1) +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Infection", y = "Age") +
+  theme(legend.position = "none")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-52-1.png)<!-- -->
+
+> `geom_boxplot()` already shows points but only for outliers. However adding `geom_jitter()` we're already showing the points. We can remove the duplicate outliers by adding the `outlier.shape = NA` argument within the boxplot geom
+
+
+```r
+ggplot(df, aes(y = age, x = infection, fill = infection)) +
+  stat_boxplot(geom = "errorbar", width = 0.1) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = .1) +
+  theme_bw() +
+  scale_fill_brewer("infection", palette = "Set1") +
+  labs(x = "Infection", y = "Age") +
+  theme(legend.position = "none")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-53-1.png)<!-- -->
+
+# My First Barplot
+
+
+```r
+ggplot(df, aes(x = child)) + geom_bar()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-54-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = child)) + geom_bar() + theme_bw()
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-55-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = child)) + theme_bw() + geom_bar() +
+  labs(y = "Frequency")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-56-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = child, fill = infection)) + theme_bw() + geom_bar() +
+  labs(y = "Frequency")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-57-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = child, fill = infection)) +
+  theme_bw() +
+  geom_bar(position = position_dodge()) +
+  labs(y = "Frequency")
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-58-1.png)<!-- -->
+
+
+```r
+ggplot(df, aes(x = child, fill = infection)) +
+  theme_bw() +
+  geom_bar(position = position_dodge()) +
+  labs(y = "Frequency", x = 'Child') +
+  scale_fill_brewer('Infection', palette = 'Set1')
+```
+
+![](ggplot_files/figure-html/unnamed-chunk-59-1.png)<!-- -->
+
+# References
+
+[https://www.tidyverse.org/packages/](https://www.tidyverse.org/packages/)
+
+[https://www.rstudio.com/resources/cheatsheets/](https://www.rstudio.com/resources/cheatsheets/)
+
+
