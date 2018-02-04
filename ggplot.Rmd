@@ -78,12 +78,12 @@ df <- df %>% mutate(infection =
 
 ![](figures/screenshots/ggplot_documentation.PNG)
 
-# My First Plot
+# My First dotplot
 
-> The actual full syntax of `ggplot()` is `ggplot(data = NULL, mapping = aes()`). R is smart enough that you don't need to specify the argument name as it automatically treats the first object specified as `data = df` and the second argument as `mapping = aes()`. That way `ggplot(df)` is equivalent to `ggplot(data = df)`.
+> The actual full syntax of `ggplot()` is `ggplot(data = NULL, mapping = aes()`). R is smart enough that you don't need to specify the argument name, as it automatically treats the first object specified as `data = df` and the second argument as `mapping = aes()`. That way `ggplot(df)` is equivalent to `ggplot(data = df)`.
 
 ```{r}
-ggplot(data = df)
+ggplot(df)
 
 ```
 
@@ -104,7 +104,7 @@ ggplot(df, aes(x = age)) +
 
 ### Making changes to the geom layer
 
-> Great! Our first plot - it doesn't look very pretty such as the dots being very large spanning multiple age points. Let's update the plot using some of the arguments available inside geom_dotplot. I don't remember all of the available arguments, lets look up the documentation using ?geom_dotplot
+> Great! Our first plot - it doesn't look very pretty such as the dots being very large spanning multiple age points. Let's update the plot using some of the arguments available inside `geom_dotplot()`. I don't remember all of the available arguments, lets look up the documentation using ?geom_dotplot
 
 ![](figures/screenshots/dotplot_documentation.PNG)
 
@@ -119,7 +119,7 @@ ggplot(df, aes(x = age)) +
   geom_dotplot(method = 'histodot', binwidth = 1)
 ```
 
-> Great! This is looking more like a dotplot, but it still doesn't look very pretty. Let's spice things up with themes.
+> Great! This is looking more like a dotplot, but it still doesn't look very pretty. It's very grey and dull, Let's spice things up with themes.
 
 ## Themes
 
@@ -149,10 +149,11 @@ ggplot(df, aes(x = age)) +
 
 ### Utilizing themes from the ggthemes package
 
-> Utilizing themes from the ggthemes package, if you dont have ggthemes then please install using `install.packages('ggthemes')` and loading up the library using `library(ggthemes)`
+> Utilizing themes from the ggthemes package, if you dont have ggthemes then please install using `install.packages('ggthemes')` and loading up the library using `library(ggthemes)`. I've commented out `#install.packages('ggthemes')` because I already have it. The # is used as a method to make comments in your code.
 
+#### Fivethirtyeight theme
 ```{r}
-# install.packages(ggthemes)
+# install.packages('ggthemes')
 library(ggthemes)
 
 # Theme matching the popular politics/analytics website firvethirtyeight
@@ -162,6 +163,7 @@ ggplot(df, aes(x = age)) +
 
 ```
 
+#### Wallstreet journal theme
 ```{r}
 
 # Wallstreet journal
@@ -170,6 +172,7 @@ ggplot(df, aes(x = age)) +
   theme_wsj()
 ```
 
+#### Economist theme
 ```{r}
 
 # Economist
@@ -180,6 +183,7 @@ ggplot(df, aes(x = age)) +
 
 ```
 
+#### Excel theme
 ```{r}
 # Excel
 
@@ -196,7 +200,7 @@ ggplot(df, aes(x = age)) +
 
 ![](figures/screenshots/theme_documentation.PNG)
 
-> Alot of possible changes we can make but we will focus on the `axis.title.y`, `axis.text.y`, and the `axis.ticks.y` arguments.
+> There are ALOT of possible customizations we can make, but we will focus on the `axis.title.y`, `axis.text.y`, and the `axis.ticks.y` arguments.
 
 > Almost all arguments in `theme()` needs to receive the information with the `element_blank()`, `element_text()`, `element_line()`, and `element_rect()` function. We will focus on `element_blank()` for now by using it to remove the information on the y axis.
 
@@ -210,9 +214,9 @@ ggplot(df, aes(x = age)) +
 ```
 
 
-## Adding and customizing the colors using the fill argument and the scale_fill_manual() / scale_fill_discrete() function
+#### Adding and customizing the colors using the fill argument and the scale_fill_manual() / scale_fill_discrete() function
 
-> Looks more like a dotplot now! But how about adding some color, by identifying the infection and non infection patients. We can do this using the `fill` argument and mapping it to the variable infection. Recall if we want to map any variables, we can only utilize those varaibles in the `aes()` argument.
+> Looks more like a dotplot now! But how about adding some color, by identifying the infection and non infection patients. We can do this using the `fill` argument and mapping it to the variable infection. Recall if we want to map any variables, we can only map those varaibles within the `aes()` argument.
 
 
 ```{r}
@@ -224,11 +228,11 @@ ggplot(df, aes(x = age, fill = infection)) +
         axis.ticks.y = element_blank())
 ```
 
-> Looks great but the x axis label 'age' doesn't look very good, lets capitalize it and fix the legend title. Doesn't look very 'publication ready'. We can do this by using the `labs()` function, and changing the x axis label. Since the color legend is mapped using the `fill` argument, we can make changes to the title by specifying it with the `scale_fill_discrete()` function.
+> Looks great but the x axis label 'age' doesn't look very good, lets capitalize it and fix the legend title so it'll be more 'tidy'. It doesn't look very 'publication ready', because we can do better!. We can do this by using the `labs()` function, and changing the x axis label. Since the color legend is mapped using the `fill` argument, we can make changes to the title by specifying it with the `scale_fill_discrete()` function.
 
-### Customizing the x axis title and the legend title
+#### Customizing the x axis title and the legend title
 
-> `scale_fill_discrete()` changes the scale name of the fill function manually as well as other options, but we'll focus on changing the name for now. By default, it uses the variable name but in this case we want to change it to something more pleasing and consistent with the rest of the plot.
+> `scale_fill_discrete()` changes the scale name of the fill function manually as well as other options (Please see the documentation for further customization details!), but we'll focus on changing the name for now. By default, it uses the variable name but in this case we want to change it to something more pleasing and consistent with the rest of the plot.
 
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
@@ -241,9 +245,9 @@ ggplot(df, aes(x = age, fill = infection)) +
   labs(x = "Age")
 ```
 
+> Legend title is now fixed - however what if we want to have custom colors ? We can use the `scale_fill_manual()` instead of `scale_fill_discrete()` because we want to specify the colors manually via the values argument. Let's change it to black and green to see how it looks.
 
-> Legend title is now fixed - however what if we want to have custom colors ? We can use the `scale_fill_manual()` instead and specify the colors manually via the values argument. Let's change it to black and green to see how it looks.
-
+#### Manually specifying colors via `scale_fill_manual()`
 ```{r}
 ggplot(df, aes(x = age, fill = factor(infection))) +
   geom_dotplot(binwidth = 1, method = "histodot")  +
@@ -255,7 +259,7 @@ ggplot(df, aes(x = age, fill = factor(infection))) +
   labs(x = "Age")
 ```
 
-### Customizing the colors using palletes
+#### Customizing the colors using palletes
 
 > ggplot2 has a selection of built in color palletes so you dont have to specify your own, that are 'aesthetically pleasing'
 
@@ -264,6 +268,9 @@ ggplot(df, aes(x = age, fill = factor(infection))) +
 Examples can be found on the ggplot2 tidyverse site
 [http://ggplot2.tidyverse.org/reference/scale_brewer.html](http://ggplot2.tidyverse.org/reference/scale_brewer.html)
 
+> We can specify the color pallete using the `scale_fill_brewer()` function. We will have to also include the updated scale name 'Infection' that way our legend title has the capitalized 'I'.
+
+##### Set3
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
   geom_dotplot(binwidth = 1, method = "histodot")  +
@@ -275,6 +282,7 @@ ggplot(df, aes(x = age, fill = infection)) +
   labs(x = "Age")
 ```
 
+##### Set2
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
   geom_dotplot(binwidth = 1, method = "histodot")  +
@@ -286,6 +294,7 @@ ggplot(df, aes(x = age, fill = infection)) +
   labs(x = "Age")
 ```
 
+##### Set1 
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
   geom_dotplot(binwidth = 1, method = "histodot")  +
@@ -297,9 +306,9 @@ ggplot(df, aes(x = age, fill = infection)) +
   labs(x = "Age")
 ```
 
-> Let's choose 'Set1', to change our color pallete. We can specify the color pallete using the `scale_fill_brewer()` function. We will have to also include the updated scale name 'Infection' that way our legend title has the capitalized 'I'. We can specify the palette using the `palette` function and specify the 'Set1' color pallete.
+> Let's choose 'Set1' as our color pallete.
 
-> What if we don't want the dots to be stacked? We can utilize the facet option to stratify the infection and non infection patients
+> What if we don't want the dots to be stacked? We can utilize the facet option to stratify the infection and non infection patients into separate panels or 'facets'
 
 ## Utilizing 'Facets' to separate our dotplot into groups
 
@@ -309,7 +318,7 @@ ggplot(df, aes(x = age, fill = infection)) +
 
 ![](figures/screenshots/facet_documentation.PNG)
 
-> We will focus on the facets argument, which per the documentation requires a formula specifying the LHS (left hand side) and the RHS (right hand side) corresponding to rows ~ columns. A . (period) can be used as a placeholder indicating no 'facet' on that level. We can facet by columns upon the infection variable by indicating this formula . ~ infection in the `facet_grid()` function.
+> We will focus on the facets argument, which per the documentation requires a formula specifying the LHS (left hand side) and the RHS (right hand side) corresponding to rows ~ columns. A . (period) can be used as a placeholder indicating no 'facet' on that level. We can facet by columns upon the infection variable by indicating this formula `. ~ infection` in the `facet_grid()` function.
 
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
@@ -340,6 +349,9 @@ ggplot(df, aes(x = age, fill = infection)) +
 > Now that we have faceted the plot, the legend isn't very informative anymore and its redundant. Lets remove it!
 
 ## Removing the legend
+
+> The legend argument is found within the `theme()` function with the argument `legend.position`. This argument has multiple uses, we would like to remove it.
+
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
   geom_dotplot(binwidth = 1, method = "histodot")  +
@@ -353,7 +365,7 @@ ggplot(df, aes(x = age, fill = infection)) +
   facet_grid(. ~ infection)
 ```
 
-> The plot is really starting to come together, but what if we want to change the scale of the x axis ? We want it to be spaced by every 5 years of age instead of 10 ?
+> The plot is really starting to come together, but what if we want to change the scale of the x axis ? A scale/label on the x axis at every 5 years may be more informative than every 20 years.
 
 ## Changing the x axis scale
 
@@ -364,6 +376,8 @@ seq(0,100,1)
 ```
 
 > We can use this in the breaks argument as shown below to specify the range. ggplot2 is smart that it will limit the view of the x axis that is within reasonable range of the data. Just to be safe we'll use `seq(from = 0, to = 100, by = 5)` to create a vector of numbers from 0 to 100 by 5
+
+> Note! You can also change the y axis scale with a similar function called `scale_y_continuous()`
 
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
@@ -381,13 +395,13 @@ ggplot(df, aes(x = age, fill = infection)) +
 
 ## Another perspective with dotplots (Vertical bins)
 
-> What if we want to compare the distribution of Infection (No vs Yes) side by side ? We will need to map the infection variable to the x axis and move the age variable to the y axis. We'll also keep the infection variable with the `fill` argument that way it'll retain the color
+> What if we want to compare the distribution of Infection (No vs Yes) side by side ? We will need to map the infection variable to the x axis and move the age variable to the y axis. We'll also keep the infection variable with the `fill` argument that way a separate color will be used for infection = No and infection = Yes
 
 ```{r}
 ggplot(df, aes(y = age, x = infection, fill = infection))
 ```
 
-> Now we have the basis of the plot, we can add the dotplot geom once again, except we'll bin the histodots on the y axis instead of x and keep the stack them aligned to the center.
+> Now we have the basis of the plot, we can add the dotplot geom once again, except we'll bin the histodots on the y axis instead of x and keep the stack them aligned to the center. We can do this using the `binaxis` argument specifying it on the y axis and we want the stacks within the center
 
 ```{r}
 ggplot(df, aes(y = age, x = infection, fill = infection)) +
@@ -418,13 +432,13 @@ ggplot(df, aes(y = age, x = infection, fill = infection)) +
   theme(legend.position = "none",
         panel.grid = element_blank()) +
   scale_fill_brewer("infection", palette = "Set1") +
-  labs(y = "Age", x = "Infection", title = 'Distriubtion of Age Stratified by Infection') +
+  labs(y = "Age", x = "Infection", title = 'Distribution of Age Stratified by Infection') +
   scale_y_continuous(breaks = seq(0,100, 10))
 ```
 
 # Saving the plot we just made
 
-> Now that we are happy with the plot we just made, we should save it so we can share it with our collaborators.  There are we can do this by invoking the `ggsave()` function. By default `ggsave()` will save the last plot that was rendered, however we can also specify the plot we would like to save as well.
+> Now that we're happy with the plot we just made, we should save it so we can share it with our collaborators.  There are we can do this by invoking the `ggsave()` function. By default `ggsave()` will save the last plot that was rendered, however we can also specify the plot we would like to save as well.
 
 > The command for `ggsave()` is `ggsave(filename = NULL, plot = last_plot(), ...)`. Please see the documentation for further details using `?ggsave`, for other possible arguments to configure.
 
@@ -434,7 +448,7 @@ ggsave('my_first_plot.png', height = 6, width = 8)
 
 > This function will save the previous plot, in your project directory as my_first_plot.png, with a height of 6 inches, and a width of 8 inches.
 
-# My First Histogram Plot
+# Histogram plots
 
 > We start off with the same base template of ggplot2, by assigning ggplot2 the 2 initial requirements for a plot. The name of the dataframe and a mapping for the coordinate within the aesthetic.
 
@@ -442,13 +456,13 @@ ggsave('my_first_plot.png', height = 6, width = 8)
 ggplot(df, aes(x = age))
 ```
 
-> Next we move forward with stating the name of the geom we want to use, let's try out the histogram geom called `geom_histogram`
+> Next we move forward with stating the name of the geom we want to use, let's try out the histogram geom called `geom_histogram()`. This is the basic foundation for all plots with ggplot2. The initial function `ggplot()` with the addition of visualization geoms we add layer by layer. Please feel free to experiment with additional geoms, however we will probably not have time to go through all of them.
 
 ```{r}
 ggplot(df, aes(x = age)) + geom_histogram()
 ```
 
-> Huzzah! We have a histogram of age, a method of visualizing the distribution of age. Lets follow the same idea of the dotplot by changing the width of the columns of our histogram. `geom_histogram` also has the same argument called `binwidth` which allows us to make that change. `binwidth = 5` allows us to change the width of the column bins to every 5 years of age. We can also better visualize this by changing the scale on the x axis with `scale_x_continuous()`
+> Huzzah! We have a histogram of age, a method of visualizing the distribution of age. Lets follow the same idea of the dotplot by changing the width of the columns of our histogram. `geom_histogram` also has the same argument called `binwidth` which allows us to make that change. `binwidth = 5` allows us to change the width of the bins (columns) to every 5 years of age. We can also better visualize this by changing the scale on the x axis with `scale_x_continuous()`
 
 ```{r}
 ggplot(df, aes(x = age)) +
@@ -493,7 +507,7 @@ ggplot(df, aes(x = age, fill = infection)) +
 
 ```
 
-> Changing the colors
+> Changing the colors by utilizing a palette
 
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
@@ -515,7 +529,7 @@ ggplot(df, aes(x = age, fill = infection)) +
 
 ```
 
-> Removing the legend and adding both the variable name and levels on the facet 'strips'
+## Removing the legend and adding both the variable name and levels on the facet 'strips'
 
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
@@ -528,7 +542,7 @@ ggplot(df, aes(x = age, fill = infection)) +
 
 ```
 
-# Let's add an extra dimension
+## Let's add an extra dimension
 ```{r}
 ggplot(df, aes(x = age, fill = infection)) +
   geom_histogram(binwidth = 5)  +
@@ -540,7 +554,7 @@ ggplot(df, aes(x = age, fill = infection)) +
 
 ```
 
-# Let's add even more dimensions
+## Let's add even more dimensions
 ```{r}
 ggplot(df, aes(x = age, fill = gender)) +
   geom_histogram(binwidth = 5)  +
@@ -550,17 +564,17 @@ ggplot(df, aes(x = age, fill = gender)) +
   facet_grid(infection ~ death, labeller = label_both)
 ```
 
-# Let's add even more dimensions
+## Even more dimensions
 ```{r}
 ggplot(df, aes(x = age, fill = gender)) +
   geom_histogram(binwidth = 5)  +
   theme_bw() +
   scale_fill_brewer("Infection", palette = "Set1") +
   labs(x = "Age", y = 'Count') +
-  facet_grid(infection ~ death, labeller = label_both)
+  facet_grid(infection ~ death + encephalopathy, labeller = label_both)
 ```
 
-# My First Boxplot
+# Boxplots
 
 > Create the basis of the plot by including the dataframe and mapping the age onto the y axis.
 
@@ -568,14 +582,18 @@ ggplot(df, aes(x = age, fill = gender)) +
 ggplot(df, aes(y = age))
 ```
 
-> We add `geom_boxplot()` to create the basic boxplot
+## We add `geom_boxplot()` to create the basic boxplot
 
 ```{r, include = F}
 ggplot(df, aes(y = age, x = NA)) +
   geom_boxplot()
 ```
 
-> We can add an error bar by adding `stat_boxplot()` with `geom = "errorbar"`
+## Adding an additional layer to overlay the boxplot
+
+> We can add an error bar by adding `stat_boxplot()` with `geom = "errorbar"`. This gives us the traditional 'box and whisker box plot`.
+
+> Of note, we need to add the `stat_boxplot()` function before the geom_boxplot. Remember, we are building plots layer by layer. We want the `stat_boxplot()` layer first, so we can overlay the `geom_boxpplot()` function over it the first layer. Experiment with the order of the layers to get the plot to how you want it.
 
 ```{r, include = F}
 ggplot(df, aes(y = age, x = NA)) +
@@ -583,7 +601,7 @@ ggplot(df, aes(y = age, x = NA)) +
   geom_boxplot()
 ```
 
-> Add a theme
+## Adding a theme
 
 ```{r, include = F}
 ggplot(df, aes(y = age, x = NA)) +
@@ -592,7 +610,7 @@ ggplot(df, aes(y = age, x = NA)) +
   theme_bw()
 ```
 
-> Remove the x axis title and text as it doesn't make sense for a single box plot
+## Remove the x axis title and text as it doesn't make sense for a single box plot
 
 ```{r, include = F}
 ggplot(df, aes(y = age, x = NA)) +
@@ -604,7 +622,9 @@ ggplot(df, aes(y = age, x = NA)) +
         axis.ticks.x = element_blank())
 ```
 
-> We can also add a fill aesthetic by infection to separate the boxplot into no infection and yes infection. To do this we will also need to map the infection variable to the x axis.
+## Stratified boxplots by a factor
+
+> We can also add a fill aesthetic by infection to separate the boxplot into no infection and yes infection. To do this we will also need to map the infection variable to the x axis. I've also added the fill argument, so we can have separate colors for No and Yes.
 
 ```{r, include = F}
 ggplot(df, aes(y = age, x = infection, fill = infection)) +
@@ -625,7 +645,7 @@ ggplot(df, aes(y = age, x = infection, fill = infection)) +
   labs(x = "Infection", y = "Age")
 ```
 
-> Change the colors by using a palette
+## Change the colors by using a palette
 
 ```{r}
 ggplot(df, aes(y = age, x = infection, fill = infection)) +
@@ -636,7 +656,7 @@ ggplot(df, aes(y = age, x = infection, fill = infection)) +
   labs(x = "Infection", y = "Age")
 ```
 
-> Also removing the legend within the theme function
+## Removing the legend within the `theme()` function
 
 ```{r}
 ggplot(df, aes(y = age, x = infection, fill = infection)) +
@@ -647,6 +667,8 @@ ggplot(df, aes(y = age, x = infection, fill = infection)) +
   labs(x = "Infection", y = "Age") +
   theme(legend.position = "none")
 ```
+
+## Overlaying an additional geom (scatter)
 
 > Going back to the grammar of graphics, we are iteratively adding additional layers to the plot. We can also add a scatter of the points on top of the boxplot to further visualize the distribution of age by infection. We can do this by adding another geom after `geom_boxplot()` called `geom_point()`. The `width = .1` argument controls the amount of jitter. Feel free to change the jitter amount to your liking.
 
