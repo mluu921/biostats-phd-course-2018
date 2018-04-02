@@ -3,13 +3,11 @@ title: "ggplot2"
 author: 
 - 'Michael Luu'
 - 'Marcio Diniz'
-date: "February 05, 2018"
+date: "April 02, 2018"
 output:
   html_document:
     keep_md: yes
     number_sections: yes
-    toc: yes
-  html_notebook:
     toc: yes
 ---
 

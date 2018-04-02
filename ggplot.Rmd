@@ -9,8 +9,6 @@ output:
     keep_md: yes
     number_sections: yes
     toc: yes
-  html_notebook:
-    toc: yes
 ---
 
 # Loading Tidyverse and Data
